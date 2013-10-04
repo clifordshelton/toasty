@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="us">
+<head>
+    <meta charset="utf-8">
+    <title>toasty - a jQuery message toast plugin</title>
+    <script src="js/jquery-1.9.1.js"></script>
+    <script src="js/toasty.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/toasty.css">
+    <style>
+        body {
+            font-family: verdana;
+            font-size: 12px;
+            text-align: center;
+            background-color: #F8F8F8;
+        }
+        .code {
+            display: block;
+            height: 75px;
+            width: 500px;
+            font-family: courier;
+            font-size: 11px;
+        }
+        .exampleTable button{
+            width: 100px;
+            height: 25px;
+        }
+        .exampleTable td {
+            text-align: center;
+        }
+    </style>
+    <script>
+        function showToast(type){
+            var params = {};
+
+            switch(type) {
+                case 'simple': 
+                    $().toasty({
+                        message: "I am just a message.."
+                    });
+                    break;
+                case 'randompos': 
+                    $().toasty({
+                        message: "Hello Mars!!",
+                        position: $("[name=pos]:checked").val()
+                    });
+                    break;
+                case 'autohide':
+                    $().toasty({
+                        message: "I won't annoy you.. This message will self-destruct in 3 seconds",
+                        autoHide: 3000
+                    });
+                    break;
+                case 'modal':
+                    $().toasty({
+                        message: "Hey!!.. You better respond to me.. or else I won't let you continue..",
+                        modal: true
+                    });
+                    break;
+                case 'multimodal':
+                    $().toasty({
+                        message: "Close ALL modal messages to remove mask<br>(I am MODAL)",
+                        modal: true,
+                        position: "tc"
+                    });
+                    $().toasty({message: "I am MODAL <br>(Hint: You can close toasts using esc key)", modal: true, position: "bl"});
+                    $().toasty({message: "I am MODAL", modal: true});
+                    $().toasty({message: "I am non-modal", position: "tr"});
+                    $().toasty({message: "I am non-modal"});
+                    break;
+                case 'msgbox':
+                    $().toasty({
+                        message: "<center>I am like a messagebox..<br/><br/><button class='closeToast'>Ok</button></center>",
+                        title: "MsgBox",
+                        modal: true
+                    });
+                    break;
+                case 'forced':
+                    $().toasty({
+                        message: "You cant close me :P",
+                        modal: true,
+                        autoHide: 4000,
+                        closeable: false
+                    });
+                    break;
+                case 'getinput':
+                    $().toasty({
+                        message: "I dont know who you are. Please tell me your name and I will remember it..<br><br> Name: <input type='text' id='yourname'/><input type='button' value='ok' class='closeToast'/>",
+                        modal: true,
+                        afterHide: function () {
+                            if($('#yourname').val()!="") {
+                                $().toasty({
+                                    message: "Hello " + $('#yourname').val()
+                                });
+                            }
+                        }
+                    });
+                    break;
+                case 'confirmation':
+                    $().toasty({
+                        message: "You are about to do the Harlem Shake. Do you want to continue?<br/><br/>"+
+                                "<center><button class='closeToast' onclick=\"$().toasty({"+
+                                "message:'<h2>Do the Harlem Shake!</h2>'});\">Ok</button> "+
+                                "<button class='closeToast'>Cancel</button>",
+                        modal: true,
+                        closeable: false
+                    });
+                    break;
+                case 'events':
+                    params.message = "You can return false on beforeShow and beforeHide events to prevent the action from happening";
+                    $("[name=events]:checked").each(function (index) {
+                        evt = $(this).val();
+                        params[evt] = function(evt){
+                            var thisEvt = evt;
+                            return function () {
+                                alert("Firing event " + thisEvt);
+                            }
+                        }(evt);
+                    });
+                    $().toasty(params);
+                    break;
+                case 'progress':
+                    showProgress();
+                    break;
+            }
+
+        }
+
+
+        function showProgress() {
+            var msg = $().toasty({
+                message: "Generating Report...<div style='margin-top: 5px; border: 1px solid #AAA; background: #FFF; padding: 1px;'><div class='progress' style='height: 20px; width: 0%; background-color: #5A3;'></div></div>",
+                closeable: false,
+                position: "tr"
+            });
+            msg.progress = 0;
+            msg.timer = setInterval(function(){
+                msg.progress += Math.random() * 20;
+                if (msg.progress > 100) {
+                    msg.progress = 100;
+                }
+                if (msg.progress == 100 || Math.random() > 0.5){
+                    msg.toast.find(".progress").animate({
+                        width: msg.progress + "%"
+                    }, 500, function(){
+                        if (msg.progress == 100) {
+                            clearInterval(msg.timer);
+                            msg.hide();
+                        }
+                    });
+                }
+            },500);
+        }
+
+        function generateToast() {
+            var params = {};
+
+            params.message = $("[name=t_message]").val();
+            params.title = $("[name=t_title]").val();
+            params.position = $("[name=t_position]:checked").val();
+            params.autoHide = $("[name=t_autoHide]").val();
+            params.modal = $("[name=t_modal]").prop('checked');
+            params.closeable = $("[name=t_closeable]").prop('checked');
+            params.showSpeed = $("[name=t_showSpeed]").val();
+            params.hideSpeed = $("[name=t_hideSpeed]").val();
+            params.anim = $("[name=t_anim]").val();
+            params.showAnim = $("[name=t_showAnim]").val();
+            params.hideAnim = $("[name=t_hideAnim]").val();
+            params.easing = $("[name=t_easing]").val();
+            params.showAnimEasing = $("[name=t_showAnimEasing]").val();
+            params.hideAnimEasing = $("[name=t_hideAnimEasing]").val();
+            console.log(params);
+
+            $().toasty( params);    
+        }
+
+        $(document).ready(function(){
+            $("#t_anim").change(function(){$("#t_showAnim, #t_hideAnim").val("")});
+            $("#t_easing").change(function(){$("#t_showAnimEasing, #t_hideAnimEasing").val("")});
+        });
+    </script>
+</head>
+<body>
+    <center>
+    <table class="exampleTable">
+        <tr>
+            <td><button onclick='showToast("simple")'>Simple Toast</button></td><td>
+                <textarea class='code'>
+$().toasty("I am just a message..");
+
+        or
+
+$().toasty({
+    message: "I am just a message.."
+});
+
+        or
+
+$().toasty("show", {
+    message: "I am just a message.."
+});
+
+                </textarea>
+            </td>
+        </tr><tr>
+            <td><button onclick='showToast("autohide")'>Auto-Hiding</button></td><td>
+                <textarea class='code'>
+$().toasty({
+    message: "I won't annoy you.. This message will self-destruct in 3 seconds",
+    autoHide: 3000
+});
+                </textarea>
+            </td>
+        </tr><tr>
+            <td>
+                <button onclick='showToast("randompos")'>Position</button><br/>
+                <input type='radio' name='pos' value='tl' id='pos1'/><label for='pos1'>tl</label>
+                <input type='radio' name='pos' value='tc' id='pos2'/><label for='pos2'>tc</label>
+                <input type='radio' name='pos' value='tr' id='pos3'/><label for='pos3'>tr</label><br/>
+                <input type='radio' name='pos' value='bl' id='pos4'/><label for='pos4'>bl</label>
+                <input type='radio' name='pos' value='bc' id='pos5'/><label for='pos5'>bc</label>
+                <input type='radio' name='pos' value='br' id='pos6' checked/><label for='pos6'>br</label>
+            </td><td>
+                <textarea class='code'>
+$().toasty({
+    message: "Hello Mars!!",
+    position: "br"; //br is default
+});
+                </textarea>
+            </td>
+        </tr><tr>
+            <td><button onclick='showToast("modal")'>Modal</button>
+                <br>
+                <button onclick='showToast("multimodal")' style='margin-top: 5px;'>Multiple Modal</button>
+            </td><td>
+                <textarea class='code'>
+$().toasty({
+    message: "Hey!!.. You better respond to me.. or else I won't let you continue..",
+    modal: true
+});
+                </textarea>
+            </td>
+        </tr><tr>
+            <td><button onclick='showToast("forced")'>Non Closeable</button></td><td>
+                <textarea class='code'>
+$().toasty({
+    closeable: false,
+    message: "You cant close me :P",
+    modal: true,
+    autoHide: 4000
+});
+                </textarea>
+            </td>
+        </tr><tr>
+            <td><button onclick='showToast("msgbox")'>MessageBox</button></td><td>
+                <textarea class='code'>
+var msg = "<center>I am like a messagebox..<br/><br/>" +
+          "<button class='closeToast'>Ok</button></center>";
+
+//A click event for closing the toast will be wired to any item in the message with style class 'closeToast'. That's how 'Ok' works
+
+$().toasty({
+    message: msg,
+    title: "MsgBox",
+    modal: true
+});
+                </textarea>
+            </td>
+        </tr><tr>
+            <td>
+                <button onclick='showToast("events")'>Events</button><br/>
+                <input type='checkbox' name='events' value='beforeShow' id='event1' checked/><label for='event1'>beforeShow</label>
+                <input type='checkbox' name='events' value='afterShow' id='event2' checked/><label for='event2'>afterShow</label><br/>
+                <input type='checkbox' name='events' value='beforeHide' id='event3' checked/><label for='event3'>beforeHide</label>
+                <input type='checkbox' name='events' value='afterHide' id='event4' checked/><label for='event4'>afterHide</label><br/>
+                <input type='checkbox' name='events' value='afterDestroy' id='event5' checked/><label for='event5'>afterDestroy</label>
+            </td><td>
+                <textarea class='code'>
+$().toasty({
+    message: "Just Some Message",
+    beforeShow: function (toastObject) {
+        //Logic to be fired before showing the toast.
+        //return false to prevent the toast from showing up
+    },
+    afterShow: function(toastObject) {
+        //Logic to run after showing the toast
+    },
+    beforeHide: function(toastObject) {
+        //Logic to run before hiding the toast
+        //return false to prevent the action
+    },
+    afterHide: function(toastObject) {
+        //Logic to run after toast becomes hidden
+    },
+    afterDestroy: function() {
+        //Logic to run after the toast is removed from the DOM
+    }
+});
+                </textarea>
+            </td>
+        </tr><tr>
+            <td><button onclick='showToast("getinput")'>Getting Input</button></td><td>
+                <textarea class='code'>
+var msg = "I dont know who you are. Please tell me your name " +
+          "and I will remember it..<br><br>"+
+          "Name: <input type='text' id='yourname'/> "+
+          "<input type='button' value='ok' class='closeToast'/>";
+
+$().toasty({
+    message: msg,
+    modal: true,
+    afterHide: function () {
+        if($('#yourname').val()!="") {
+            $().toasty({
+                message: "Hello " + $('#yourname').val()
+            });
+        }
+    }
+});
+                </textarea>
+            </td>
+        </tr><tr>
+            <td><button onclick='showToast("confirmation")'>Confirmation</button></td><td>
+                <textarea class='code'>
+var msg = "You are about to do the Harlem Shake. "+
+          "Do you want to continue?<br/><br/>"+
+          "<center><button class='closeToast' "+
+          "onclick='doTheHarlemShake();'>Ok</button> "+
+          "<button class='closeToast'>Cancel</button>";
+
+$().toasty({
+    message: msg,
+    modal: true,
+    closeable: false
+});
+
+function doTheHarlemShake() {
+    $().toasty({
+        message:'<h2>Do the Harlem Shake!</h2>'
+    });
+}
+                </textarea>
+            </td>
+        </tr>
+        </tr><tr>
+            <td><button onclick='showToast("progress")'>Progress Bar</button><br>
+                <span style='font-size: 9px;'>Go Ahead! Click it multiple times</span></td><td>
+                <textarea class='code'>
+var msg = "Generating Report...<div style='"+
+          "margin-top: 5px; border: 1px solid #AAA;"+
+          "background: #FFF; padding: 1px'>"+
+              "<div class='progress' style='"+
+              "height: 20px; width: 0%; background: #5A3;"+
+              "'></div>"+
+          "</div>";
+
+var toastObj = $().toasty({
+    message: msg,
+    closeable: false
+});
+
+toastObj.toast.find(".progress").animate({
+    width: "100%"
+}, 4000, function(){
+    toastObj.hide();
+});
+                </textarea>
+            </td>
+        </tr>
+    </table>
+    <br/><br/>
+    <div style='border: 1px solid #AAA; background-color:#FFF; display: inline-block; padding: 10px;'>
+        <h3>Build-A-Toast</h3>
+        <table>
+            <tr><td>message: </td><td colspan="3"><input type="text" id="t_message" name="t_message" value="Message" style="width: 300px;"/> <span style='color:red'> (Reqd)</span></td></tr>
+            <tr><td>title: </td><td colspan="3"><input type="text" id="t_title" name="t_title"/></td></tr>
+            <tr><td>position: </td><td colspan="3">
+                <input type='radio' name='t_position' value='tl' id='t_pos1'/><label for='t_pos1'>tl</label>
+                <input type='radio' name='t_position' value='tc' id='t_pos2'/><label for='t_pos2'>tc</label>
+                <input type='radio' name='t_position' value='tr' id='t_pos3'/><label for='t_pos3'>tr</label><br/>
+                <input type='radio' name='t_position' value='bl' id='t_pos4'/><label for='t_pos4'>bl</label>
+                <input type='radio' name='t_position' value='bc' id='t_pos5'/><label for='t_pos5'>bc</label>
+                <input type='radio' name='t_position' value='br' id='t_pos6' checked/><label for='t_pos6'>br</label>
+            </td></tr>
+            <tr><td>autohide: </td><td colspan="3"><input type="text" id="t_autoHide" name="t_autoHide"/>milliseconds</td></tr>
+            <tr><td>modal: </td><td colspan="3"><input type="checkbox" id="t_modal" name="t_modal"/></td></tr>
+            <tr><td>closeable: </td><td colspan="3"><input type="checkbox" id="t_closeable" name="t_closeable" checked/></td></tr>
+            <tr><td>showSpeed: </td><td colspan="3"><input type="text" id="t_autoHide" name="t_showSpeed" value="300"/>milliseconds</td></tr>
+            <tr><td>hideSpeed: </td><td colspan="3"><input type="text" id="t_autoHide" name="t_hideSpeed" value="200"  />milliseconds</td></tr>
+            <tr><td>anim: </td><td><select id="t_anim" name="t_anim">
+                <option value="slide">slide</option>
+                <option value="fade">fade</option>
+                <option value="slide fade">slide fade</option>
+            </select></td><td>easing: </td><td><select id="t_easing" name="t_easing">
+                <option value="linear">linear</option>
+                <option value="swing">swing</option>
+                <option value="false" disabled></option>
+                <option value="easeInExpo">easeInExpo</option>
+                <option value="easeOutExpo">easeOutExpo</option>
+                <option value="easeInOutExpo">easeInOutExpo</option>
+                <option value="false" disabled></option>
+                <option value="easeInCirc">easeInCirc</option>
+                <option value="easeOutCirc">easeOutCirc</option>
+                <option value="easeInOutCirc">easeInOutCirc</option>
+                <option value="false" disabled></option>
+                <option value="easeInElastic">easeInElastic</option>
+                <option value="easeOutElastic">easeOutElastic</option>
+                <option value="easeInOutElastic">easeInOutElastic</option>
+                <option value="false" disabled></option>
+                <option value="easeInBack">easeInBack</option>
+                <option value="easeOutBack">easeOutBack</option>
+                <option value="easeInOutBack">easeInOutBack</option>
+                <option value="false" disabled></option>
+                <option value="easeInBounce">easeInBounce</option>
+                <option value="easeOutBounce">easeOutBounce</option>
+                <option value="easeInOutBounce">easeInOutBounce</option>
+            </select></td></tr>
+            <tr><td>showAnim: <br/>(Overrides anim)</td><td><select id="t_showAnim" name="t_showAnim">
+                <option value=""></option>
+                <option value="slide">slide</option>
+                <option value="fade">fade</option>
+                <option value="slide fade">slide fade</option>
+            </select></select></td><td>showAnimEasing: <br/>(Ease Outs Work Well)</td><td><select id="t_showAnimEasing" name="t_showAnimEasing">
+                <option value=""></option>
+                <option value="linear">linear</option>
+                <option value="swing">swing</option>
+                <option value="false" disabled></option>
+                <option value="easeInExpo">easeInExpo</option>
+                <option value="easeOutExpo">easeOutExpo</option>
+                <option value="easeInOutExpo">easeInOutExpo</option>
+                <option value="false" disabled></option>
+                <option value="easeInCirc">easeInCirc</option>
+                <option value="easeOutCirc">easeOutCirc</option>
+                <option value="easeInOutCirc">easeInOutCirc</option>
+                <option value="false" disabled></option>
+                <option value="easeInElastic">easeInElastic</option>
+                <option value="easeOutElastic">easeOutElastic</option>
+                <option value="easeInOutElastic">easeInOutElastic</option>
+                <option value="false" disabled></option>
+                <option value="easeInBack">easeInBack</option>
+                <option value="easeOutBack">easeOutBack</option>
+                <option value="easeInOutBack">easeInOutBack</option>
+                <option value="false" disabled></option>
+                <option value="easeInBounce">easeInBounce</option>
+                <option value="easeOutBounce">easeOutBounce</option>
+                <option value="easeInOutBounce">easeInOutBounce</option>
+            </select></td></tr>
+            <tr><td>hideAnim: <br/>(Overrides anim)</td><td><select id="t_hideAnim" name="t_hideAnim">
+                <option value=""></option>
+                <option value="slide">slide</option>
+                <option value="fade">fade</option>
+                <option value="slide fade">slide fade</option>
+            </select></select></td><td>hideAnimEasing: <br/>(Ease Ins Work Well)</td><td><select id="t_hideAnimEasing" name="t_hideAnimEasing">
+                <option value=""></option>
+                <option value="linear">linear</option>
+                <option value="swing">swing</option>
+                <option value="false" disabled></option>
+                <option value="easeInExpo">easeInExpo</option>
+                <option value="easeOutExpo">easeOutExpo</option>
+                <option value="easeInOutExpo">easeInOutExpo</option>
+                <option value="false" disabled></option>
+                <option value="easeInCirc">easeInCirc</option>
+                <option value="easeOutCirc">easeOutCirc</option>
+                <option value="easeInOutCirc">easeInOutCirc</option>
+                <option value="false" disabled></option>
+                <option value="easeInElastic">easeInElastic</option>
+                <option value="easeOutElastic">easeOutElastic</option>
+                <option value="easeInOutElastic">easeInOutElastic</option>
+                <option value="false" disabled></option>
+                <option value="easeInBack">easeInBack</option>
+                <option value="easeOutBack">easeOutBack</option>
+                <option value="easeInOutBack">easeInOutBack</option>
+                <option value="false" disabled></option>
+                <option value="easeInBounce">easeInBounce</option>
+                <option value="easeOutBounce">easeOutBounce</option>
+                <option value="easeInOutBounce">easeInOutBounce</option>
+            </select></td></tr>
+            <tr><td colspan="4" align="center"><button onclick='generateToast()' style='height: 35px; width: 100px; margin-top: 10px;'>Toast!</button></td></tr>
+        </table>
+    </div>
+    </center>
+</body>
+</html>
