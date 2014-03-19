@@ -1,0 +1,33 @@
+{
+    "name": "jqToasty",
+    "title": "jQuery Toasty",
+    "description": "jQuery plugin for showing highly customizable message toasts.",
+    "keywords": [
+        "toast",
+        "notification",
+        "messages"
+    ],
+    "version": "1.0.0",
+    "author": {
+        "name": "Cliford Shelton",
+        "email": "clifordshelton@gmail.com"
+    },
+    "maintainers": [
+        {
+            "name": "Cliford Shelton",
+            "email": "clifordshelton@gmail.com"
+        }
+    ],
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "https://github.com/jquery/jquery-color/blob/2.1.2/MIT-LICENSE.txt"
+        }
+    ],
+    "homepage": "http://clifordtube.com/toasty/index.html",
+    "docs": "http://clifordtube.com/toasty/index.html#tab_3",
+    "download": "https://github.com/clifordshelton/toasty",
+    "dependencies": {
+        "jquery": ">=1.5"
+    }
+}
