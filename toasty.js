@@ -172,7 +172,7 @@ Contact: clifordshelton@gmail.com
                     $(document).keydown(handleEscapeKey);
                 }
                 if (item.autoHide && !isNaN(item.autoHide)) {
-                    setTimeout(function(){
+                    item.timerHandle = setTimeout(function(){
                         item.timerHandle = null;
                         animateToast(item, false);
                     }, parseInt(item.autoHide));
